@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 from collections import namedtuple
+import os
+from datetime import datetime
 Point = namedtuple('Point', ['x', 'y'])
 
 def create_sunglasses(w, h):
@@ -47,11 +49,23 @@ def main():
     # capture inits
     cap = cv2.VideoCapture(0)
     print("Face Photo Booth Started!")
-    print("Press 'q' to quit")
-    print("Press SPACE to toggle sunglasses")
+    print("Controls:")
+    print("- Press 'q' to quit")
+    print("- Press SPACE to toggle sunglasses")
+    print("- Press 's' to save photo")
     
     # to track if filter is enabled
     show_sunglasses = False
+    
+    # init photos dir
+    photos_dir = "photos"
+    if not os.path.exists(photos_dir):
+        os.makedirs(photos_dir)
+    
+    # for rendering visual text feedback
+    #   when saving a photo
+    save_message = ""
+    save_message_timer = 0
     
     # video feed loop
     while True:
@@ -92,6 +106,13 @@ def main():
         cv2.putText(frame, mode_text, 
                    (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         
+        # save photo visual feedback (text confirmation)
+        if save_message_timer > 0:
+            cv2.putText(frame, save_message, 
+                       (10, frame.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX, 
+                       1, (0, 255, 0), 2)
+            save_message_timer -= 1
+        
         # render the frame including all overlays
         cv2.imshow('Face Photo Booth', frame)
         
@@ -102,6 +123,14 @@ def main():
         elif key == ord(' '):  # spacebar toggles sunglasses
             show_sunglasses = not show_sunglasses
             print(f"Sunglasses {'enabled' if show_sunglasses else 'disabled'}")
+        elif key == ord('s'):  # save photo
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"photo_{timestamp}.jpg"
+            filepath = os.path.join(photos_dir, filename)
+            cv2.imwrite(filepath, frame)
+            save_message = f"Photo saved as: {filename}"
+            save_message_timer = 50  # Display message for 50 frames
+            print(f"Photo saved to: {filepath}")
     
     # release resources
     cap.release()
