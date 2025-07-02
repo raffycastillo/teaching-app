@@ -20,12 +20,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Current Features (v0.1)
-- Basic webcam feed
+## Current Features (v0.2)
+- Real-time webcam feed
+- Face detection with rectangle overlay
+- Face count display
 - Press 'q' to quit
 
 ## Coming Soon
-- Face detection
 - Fun overlays
 - Photo saving
-- Custom overlay creation 
+- Custom overlay creation
+
+## Technical Details
+The application uses OpenCV's Haar Cascade Classifier for face detection. The classifier is pre-trained and comes bundled with OpenCV. 
