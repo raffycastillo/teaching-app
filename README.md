@@ -20,16 +20,21 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Current Features (v0.2)
+## Current Features (v0.3)
 - Real-time webcam feed
 - Face detection with rectangle overlay
 - Face count display
+- Sunglasses overlay (toggle with SPACE)
 - Press 'q' to quit
 
+## Controls
+- SPACE: Toggle sunglasses overlay
+- Q: Quit application
+
 ## Coming Soon
-- Fun overlays
+- More fun overlays (hat, mustache)
 - Photo saving
 - Custom overlay creation
 
 ## Technical Details
-The application uses OpenCV's Haar Cascade Classifier for face detection. The classifier is pre-trained and comes bundled with OpenCV. 
+The application uses OpenCV's Haar Cascade Classifier for face detection. The classifier is pre-trained and comes bundled with OpenCV. Overlays are implemented using numpy arrays and image masking techniques. 
