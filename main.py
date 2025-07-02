@@ -12,7 +12,7 @@ def create_sunglasses(w, h):
     #  about 1/3 of the face's width (horizontal)
     #  about 1/6 of the face's length (vertical)
     glass_w = round(w / 1.5)
-    glass_h = h // 6
+    glass_h = h // 4
     # sunglasses top left coordinates:
     glass_tl = Point((w-glass_w) // 2, h // 4)
 
@@ -27,16 +27,10 @@ def create_sunglasses(w, h):
     right_lens_tl = Point(glass_tl.x + left_lens_w + bridge_w, glass_tl.y)
     bridge_tl = Point(glass_tl.x + left_lens_w, glass_tl.y + ((glass_h // 7) * 3))
 
-
-    # cv2.rectangle(overlay, glass_tl, (glass_tl.x+glass_w, glass_tl.y+glass_h), (255, 255, 255), -1)
-    # return overlay
-
-    print('width and height:', w, h)
-
     # left lens
-    cv2.rectangle(overlay, left_lens_tl, (left_lens_tl.x+left_lens_w, left_lens_tl.y + left_lens_h), (58, 93, 255), -1)
+    cv2.rectangle(overlay, left_lens_tl, (left_lens_tl.x+left_lens_w, left_lens_tl.y + left_lens_h), (61, 61, 61), -1)
     # right lens
-    cv2.rectangle(overlay, right_lens_tl, (right_lens_tl.x+right_lens_w, right_lens_tl.y + right_lens_h), (58, 255, 255), -1)
+    cv2.rectangle(overlay, right_lens_tl, (right_lens_tl.x+right_lens_w, right_lens_tl.y + right_lens_h), (61, 61, 61), -1)
     # middle bridge
     cv2.rectangle(overlay, bridge_tl, 
                  (bridge_tl.x+bridge_w, bridge_tl.y+bridge_h), (255, 255, 255), -1)
