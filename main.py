@@ -39,6 +39,49 @@ def create_sunglasses(w, h):
     
     return overlay
 
+def create_custom_overlay():
+    """draw your own overlay!"""
+    # initiate white canvas, 300x400px window
+    canvas = np.ones((300, 400, 3), dtype=np.uint8) * 255
+    drawing = False
+    last_point = None
+
+    # callbacks defined for openCV MUST have these five params
+    #   even if they're not being used.
+    def draw(event, x, y, flags, param):
+        nonlocal drawing, last_point
+        if event == cv2.EVENT_LBUTTONDOWN:
+            drawing = True
+            last_point = (x, y)
+        elif event == cv2.EVENT_MOUSEMOVE:
+            if drawing:
+                cv2.line(canvas, last_point, (x, y), (0, 0, 0), 2)
+                last_point = (x, y)
+        elif event == cv2.EVENT_LBUTTONUP:
+            drawing = False
+            last_point = None
+
+    # init new window and attach callback
+    cv2.namedWindow('Custom Overlay Creator')
+    cv2.setMouseCallback('Custom Overlay Creator', draw)
+
+    # console instructions
+    print("\nCustom Overlay Creator")
+    print("- Draw your overlay using the mouse")
+    print("- Press ENTER to save and use")
+    print("- Press ESC to cancel\n")
+
+    while True:
+        cv2.imshow('Custom Overlay Creator', canvas)
+        key = cv2.waitKey(1) & 0xFF
+        
+        if key == 13:  # ENTER key
+            cv2.destroyWindow('Custom Overlay Creator')
+            return canvas
+        elif key == 27:  # ESC key
+            cv2.destroyWindow('Custom Overlay Creator')
+            return None
+
 def main():
     # initialize pre-trained face detector
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -53,9 +96,12 @@ def main():
     print("- Press 'q' to quit")
     print("- Press SPACE to toggle sunglasses")
     print("- Press 's' to save photo")
+    print("- Press 'c' to create custom overlay")
     
-    # to track if filter is enabled
-    show_sunglasses = False
+    # to track if filter is enabled and which type
+    show_overlay = False
+    use_custom = False
+    custom_overlay = None
     
     # init photos dir
     photos_dir = "photos"
@@ -87,14 +133,21 @@ def main():
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
             
             # apply overlay if applicable
-            if show_sunglasses:
-                # initialize the sunglass render
-                glasses = create_sunglasses(w, h)
-                # find the region of interest (roi)
-                #   and overlay the sunglasses of the base feed
+            if show_overlay:
+                if use_custom and custom_overlay is not None:
+                    # rescales the custom overlay depending on face bounding box
+                    overlay = cv2.resize(custom_overlay, (w, h))
+                    # mask any pixel that is non-white
+                    #   since we set the canvas background to white
+                    mask = np.any(overlay != [255, 255, 255], axis=2)
+                else:
+                    # sunglasses overlay
+                    overlay = create_sunglasses(w, h)
+                    mask = np.any(overlay != [0, 0, 0], axis=2)
+                
+                # apply
                 roi = frame[y:y+h, x:x+w]
-                mask = np.any(glasses != [0, 0, 0], axis=2)
-                roi[mask] = glasses[mask]
+                roi[mask] = overlay[mask]
         
         # there can be multiple faces detected,
         #   so we added a count.
@@ -102,7 +155,13 @@ def main():
                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         
         # to show current mode
-        mode_text = "Sunglasses: ON" if show_sunglasses else "Sunglasses: OFF"
+        mode_text = "Mode: "
+        if not show_overlay:
+            mode_text += "No Overlay"
+        elif use_custom:
+            mode_text += "Custom Overlay"
+        else:
+            mode_text += "Sunglasses"
         cv2.putText(frame, mode_text, 
                    (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         
@@ -120,9 +179,12 @@ def main():
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'): # quitting
             break
-        elif key == ord(' '):  # spacebar toggles sunglasses
-            show_sunglasses = not show_sunglasses
-            print(f"Sunglasses {'enabled' if show_sunglasses else 'disabled'}")
+        elif key == ord(' '):  # spacebar toggles overlay
+            if use_custom and not show_overlay:
+                # If custom was last used, switch back to sunglasses
+                use_custom = False
+            show_overlay = not show_overlay
+            print(f"Overlay {'enabled' if show_overlay else 'disabled'}")
         elif key == ord('s'):  # save photo
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"photo_{timestamp}.jpg"
@@ -131,6 +193,15 @@ def main():
             save_message = f"Photo saved as: {filename}"
             save_message_timer = 50  # Display message for 50 frames
             print(f"Photo saved to: {filepath}")
+        elif key == ord('c'):  # create custom overlay
+            new_overlay = create_custom_overlay()
+            if new_overlay is not None:
+                custom_overlay = new_overlay
+                use_custom = True
+                show_overlay = True
+                print("Custom overlay created and activated!")
+            else:
+                print("Custom overlay creation cancelled")
     
     # release resources
     cap.release()
