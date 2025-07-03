@@ -181,7 +181,7 @@ class PhotoBooth:
     
     def run(self):
         """Main application loop"""
-        # init camera feed
+        # init camera feed, defaults to webcam/primary camera connected
         cap = cv2.VideoCapture(0)
         if not cap.isOpened():
             raise RuntimeError("Failed to open camera")
@@ -251,10 +251,8 @@ def main():
         print("\nTroubleshooting:")
         print("1. Make sure you have a camera connected")
         print("2. Check if OpenCV is installed:")
-        print("   pip install opencv-python")
+        print("   pip install -r requirements.txt")
         print("3. Try closing other applications using the camera")
-        return 1
-    return 0
 
 if __name__ == "__main__":
-    exit(main())
+    main()

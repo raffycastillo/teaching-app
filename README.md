@@ -49,6 +49,12 @@ Run the application:
 python main.py
 ```
 
+By default, the application uses your system's default camera (usually the built-in webcam on laptops). If you have multiple cameras and want to use a different one, you can modify the camera index in `main.py`:
+```python
+# In main.py, change 0 to 1 for second camera, 2 for third camera, etc.
+cap = cv2.VideoCapture(0)  # 0 is default camera
+```
+
 ### Controls
 
 - **SPACE**: Toggle overlay (switches between no overlay, sunglasses, custom)
