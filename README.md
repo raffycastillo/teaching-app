@@ -1,40 +1,86 @@
-# Face Photo Booth App
+# Face Photo Booth
 
-A fun interactive photo booth application that will eventually support face detection and various overlays.
+A fun interactive camera application that lets you add overlays to detected faces in real-time.
 
-## Setup
+## Features
 
-1. Create a virtual environment (recommended):
+- Real-time face detection using OpenCV
+- Built-in sunglasses overlay
+- Custom overlay creation with mouse drawing
+- Photo saving with timestamp-based filenames
+- Support for multiple faces simultaneously
+
+## Requirements
+
+- Python 3.x
+- OpenCV (`opencv-python`)
+- NumPy
+- Webcam/Camera device
+
+## Installation
+
+1. Clone this repository:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+git clone https://github.com/raffycastlee/capstone/teaching-app.git
+cd teaching-app
 ```
 
-2. Install dependencies:
+2. Create and activate a virtual environment (recommended):
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+```
+
+3. Install required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+## Usage
+
+Run the application:
 ```bash
 python main.py
 ```
 
-## Current Features (v0.3)
-- Real-time webcam feed
-- Face detection with rectangle overlay
-- Face count display
-- Sunglasses overlay (toggle with SPACE)
-- Press 'q' to quit
+### Controls
 
-## Controls
-- SPACE: Toggle sunglasses overlay
-- Q: Quit application
+- **SPACE**: Toggle overlay (switches between no overlay, sunglasses, custom)
+- **C**: Open custom overlay creator
+- **S**: Save current photo
+- **Q**: Quit application
 
-## Coming Soon
-- More fun overlays (hat, mustache)
-- Photo saving
-- Custom overlay creation
+### Custom Overlay Creator
+
+1. Press 'C' to open the drawing interface
+2. Draw your design using the mouse (click and drag)
+3. Press ENTER to save and use your overlay
+4. Press ESC to cancel without saving
+
+### Photos
+
+- All photos are saved in the `photos` directory
+- Filenames include timestamps (format: `photo_YYYYMMDD_HHMMSS.jpg`)
+- Photos include any active overlays
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. Make sure your camera is connected and not in use by other applications
+2. Verify OpenCV is installed correctly: `pip install -r requirements.txt`
+3. Try closing other applications that might be using the camera
+4. Ensure you have write permissions in the application directory for saving photos
 
 ## Technical Details
-The application uses OpenCV's Haar Cascade Classifier for face detection. The classifier is pre-trained and comes bundled with OpenCV. Overlays are implemented using numpy arrays and image masking techniques. 
+
+- Uses Haar cascade classifier for face detection
+- Supports real-time overlay scaling based on face size
+- Implements non-destructive overlay application
+- Custom overlays use white as the transparent color 
